@@ -234,13 +234,17 @@ body{
 (function(){
 'use strict';
 
-const S={area:30,tab:'roller',flok:'partial',gr:.30,ro:.30,sp:1.00,ar:2.00,lkOn:false,lk:100};
+const S={area:30,tab:'roller',flok:'partial',gr:.30,ro:.30,sp:1.00,ar:2.00,lkOn:false,lk:100,
+         flRo:.50,flkLkOn:false,flkLk:100,spLkOn:false,spLk:100,smOn:true};
 const RC={
-  gr:{min:.30,max:.40,step:.05,lbl:'Витрата ґрунту',unit:'кг/м²'},
-  ro:{min:.30,max:.50,step:.05,lbl:'Витрата підлоги',unit:'кг/м²'},
-  sp:{min:.50,max:5.0,step:.10,lbl:'Витрата підлоги',unit:'кг/м²'},
-  ar:{min:2.0,max:3.0,step:.50,lbl:'Витрата підлоги',unit:'кг/м²'},
-  lk:{min:100,max:150,step:25,lbl:'Витрата лаку',unit:'г/м²'},
+  gr:   {min:.30,max:.40, step:.05,lbl:'Витрата ґрунту',  unit:'кг/м²'},
+  ro:   {min:.30,max:.50, step:.05,lbl:'Витрата підлоги', unit:'кг/м²'},
+  sp:   {min:.50,max:5.0, step:.10,lbl:'Витрата підлоги', unit:'кг/м²'},
+  ar:   {min:2.0,max:3.0, step:.50,lbl:'Витрата підлоги', unit:'кг/м²'},
+  lk:   {min:100,max:150, step:25, lbl:'Витрата лаку',    unit:'г/м²'},
+  flRo: {min:.50,max:1.0, step:.10,lbl:'Витрата підлоги', unit:'кг/м²'},
+  flkLk:{min:100,max:150, step:25, lbl:'Витрата лаку',    unit:'г/м²'},
+  spLk: {min:100,max:150, step:25, lbl:'Витрата лаку',    unit:'г/м²'},
 };
 const NOVAK=[{s:1,p:780},{s:4.5,p:1950},{s:10,p:3850}];
 const ARTP =[{s:1,p:780},{s:4.5,p:2930},{s:10,p:5730}];
@@ -337,6 +341,67 @@ function lakRow(A){
   </div>`;
 }
 
+function flokLakRow(A){
+  const res=S.flkLkOn?cheap(A,LAK,S.flkLk/1000):null;
+  const desc=S.flkLkOn?`Водний\u00a0·\u00a0під валик\u00a0·\u00a0${S.flkLk}\u00a0г/м²`:`Водний\u00a0·\u00a0під валик\u00a0·\u00a0100–150\u00a0г/м²`;
+  return`<div class="mat-row">
+    <div class="mat-top">
+      <div class="mat-info">
+        <div class="mat-name">Захисний поліуретановий лак</div>
+        <div class="mat-desc">${desc}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding-top:1px">
+        ${res?`<div class="mat-price">${fN(res.cost)}\u00a0₴</div>`:''}
+        <button class="tog-btn${S.flkLkOn?' on':''}" id="flk-lak-tog" aria-pressed="${S.flkLkOn}">
+          <span class="tog-track"></span><span class="tog-thumb"></span>
+        </button>
+      </div>
+    </div>
+    ${res?`<div class="mat-chips"><span class="chip-kg">${fK(res.kg)}\u00a0кг</span><span class="chip-pkgs">${pStr(res.ps)}</span></div>`:''}
+    ${res?stepper('flkLk',S.flkLk):''}
+  </div>`;
+}
+
+function spatulaLakRow(A){
+  const res=S.spLkOn?cheap(A,LAK,S.spLk/1000):null;
+  const desc=S.spLkOn?`Водний\u00a0·\u00a0під валик\u00a0·\u00a0${S.spLk}\u00a0г/м²`:`Водний\u00a0·\u00a0під валик\u00a0·\u00a0100–150\u00a0г/м²`;
+  return`<div class="mat-row">
+    <div class="mat-top">
+      <div class="mat-info">
+        <div class="mat-name">Захисний поліуретановий лак</div>
+        <div class="mat-desc">${desc}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding-top:1px">
+        ${res?`<div class="mat-price">${fN(res.cost)}\u00a0₴</div>`:''}
+        <button class="tog-btn${S.spLkOn?' on':''}" id="sp-lak-tog" aria-pressed="${S.spLkOn}">
+          <span class="tog-track"></span><span class="tog-thumb"></span>
+        </button>
+      </div>
+    </div>
+    ${res?`<div class="mat-chips"><span class="chip-kg">${fK(res.kg)}\u00a0кг</span><span class="chip-pkgs">${pStr(res.ps)}</span></div>`:''}
+    ${res?stepper('spLk',S.spLk):''}
+  </div>`;
+}
+
+function smolaRow(A){
+  const res=S.smOn?cheap(A,SMLA,.30):null;
+  return`<div class="mat-row">
+    <div class="mat-top">
+      <div class="mat-info">
+        <div class="mat-name">Епоксидна смола</div>
+        <div class="mat-desc">Запечатка Флоків\u00a0·\u00a00,3\u00a0кг/м²</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding-top:1px">
+        ${res?`<div class="mat-price">${fN(res.cost)}\u00a0₴</div>`:''}
+        <button class="tog-btn${S.smOn?' on':''}" id="sm-tog" aria-pressed="${S.smOn}">
+          <span class="tog-track"></span><span class="tog-thumb"></span>
+        </button>
+      </div>
+    </div>
+    ${res?`<div class="mat-chips"><span class="chip-kg">${fK(res.kg)}\u00a0кг</span><span class="chip-pkgs">${pStr(res.ps)}</span></div>`:''}
+  </div>`;
+}
+
 function render(){
   const A=S.area;
   const g=cheap(A,GRNT,S.gr);
@@ -350,20 +415,25 @@ function render(){
     tot=g.cost+f.cost;
   }else if(S.tab==='spatula'){
     const f=cheap(A,NOVAK,S.sp);
+    const spLkR=S.spLkOn?cheap(A,LAK,S.spLk/1000):{cost:0};
     rows=[matRow('Епоксидний ґрунт',gD,g,stepper('gr',S.gr)),
-          matRow('Підлога Новачок',`Наливний шар під шпатель\u00a0·\u00a0${fR(S.sp)}\u00a0кг/м²`,f,stepper('sp',S.sp))];
-    tot=g.cost+f.cost;
+          matRow('Підлога Новачок',`Наливний шар під шпатель\u00a0·\u00a0${fR(S.sp)}\u00a0кг/м²`,f,stepper('sp',S.sp)),
+          spatulaLakRow(A)];
+    tot=g.cost+f.cost+spLkR.cost;
   }else if(S.tab==='flok'){
-    const f=cheap(A,NOVAK,.50);
+    const f=cheap(A,NOVAK,S.flRo);
     const grams=S.flok==='partial'?50:S.flok==='medium'?150:350;
     const fl=S.flok==='partial'?'Часткова':S.flok==='medium'?'Середня':'Повна';
     const fn=Math.ceil(A*grams/1000),fc=fn*620;
     const sm=cheap(A,SMLA,.30);
+    const flkLkR=S.flkLkOn?cheap(A,LAK,S.flkLk/1000):{cost:0};
+    const smCost=S.smOn?sm.cost:0;
     rows=[matRow('Епоксидний ґрунт',gD,g,stepper('gr',S.gr)),
-          matRow('Підлога Новачок','Під шпатель+валик\u00a0·\u00a0500\u00a0г/м²',f,''),
+          matRow('Підлога Новачок',`Під шпатель+валик\u00a0·\u00a0${fR(S.flRo)}\u00a0кг/м²`,f,stepper('flRo',S.flRo)),
           matRow('Флок-чіпси',`${fl} засипка\u00a0·\u00a0${grams}\u00a0г/м²`,{cost:fc,ps:[{n:fn,s:1}],kg:fn},flokToggle()),
-          matRow('Епоксидна смола','Запечатка флоку\u00a0·\u00a00,3\u00a0кг/м²',sm,'')];
-    tot=g.cost+f.cost+fc+sm.cost;
+          smolaRow(A),
+          flokLakRow(A)];
+    tot=g.cost+f.cost+fc+smCost+flkLkR.cost;
   }else{
     const f=cheap(A,ARTP,S.ar);
     const lkR=S.lkOn?cheap(A,LAK,S.lk/1000):{cost:0};
@@ -392,6 +462,12 @@ document.addEventListener('click',e=>{
   if(tb){S.tab=tb.dataset.t;document.querySelectorAll('.type-tab').forEach(b=>b.classList.remove('on'));tb.classList.add('on');render();return;}
   const lt=e.target.closest('#lak-tog');
   if(lt){S.lkOn=!S.lkOn;render();return;}
+  const flt=e.target.closest('#flk-lak-tog');
+  if(flt){S.flkLkOn=!S.flkLkOn;render();return;}
+  const slt=e.target.closest('#sp-lak-tog');
+  if(slt){S.spLkOn=!S.spLkOn;render();return;}
+  const smt=e.target.closest('#sm-tog');
+  if(smt){S.smOn=!S.smOn;render();return;}
   const fl=e.target.closest('[data-fl]');
   if(fl){S.flok=fl.dataset.fl;render();return;}
   const sb=e.target.closest('[data-sid]');
